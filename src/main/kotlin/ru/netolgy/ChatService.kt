@@ -14,11 +14,10 @@ class ChatService {
         return newChat
     }
 
-    fun getChats(ownerID: String): MutableList<Chat> {
+    fun getChats(ownerID: String): List<Chat> {
         val chatsWithMsg = chats
             .filter { it.ownerId == ownerID || it.recipientId == ownerID && it.msg.isNotEmpty() }
             .ifEmpty { throw NotFoundException("нет сообщений") }
-            .toMutableList()
         println("Список чатов пользователя $ownerID ")
         println(chatsWithMsg)
         return chatsWithMsg
@@ -30,7 +29,7 @@ class ChatService {
     }
 
     fun getUnreadChatsCount(ownerID: String): Int {
-        val count = chats
+        val count = chats.asSequence()
             .filter { it.ownerId == ownerID || it.recipientId == ownerID }
             .count { chat -> chat.msg.any { !it.read && it.recipientId == ownerID } }
         println("У пользователя ${ownerID}, непрочитанных чатов: $count")
@@ -106,6 +105,7 @@ class ChatService {
             ?: throw NotFoundException("Сообщение c id $msgId не найдено")
     }
 }
+
 
 
 
